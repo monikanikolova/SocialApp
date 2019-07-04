@@ -65,4 +65,5 @@ node_modules/
 .env
 
 .AdminSDK.json
+.DS_Store
 
