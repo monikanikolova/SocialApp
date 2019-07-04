@@ -1,7 +1,7 @@
 const functions = require("firebase-functions");
 var admin = require("firebase-admin");
 
-var serviceAccount = require('./AdminSDK.json');
+var serviceAccount = require('./admin.json');
 
 // Initialize admin
 admin.initializeApp({
@@ -40,7 +40,7 @@ app.post('/scream', (req, res) => {
   const newScream = {
     body: req.body.body,
     userHandle: req.body.userHandle,
-    createdAt: admin.firestore.Timestamp.fromDate(new Date())
+    createdAt: new Date().toISOString()
   };
 
   admin
