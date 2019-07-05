@@ -6,7 +6,6 @@ const app = require("express")();
 
 // Your web app's Firebase configuration
 
-
 // Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 // Initialize admin
@@ -16,8 +15,41 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
+const FBAuth = (req, res, next) => {
+  let idToken;
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer ')
+  ) {
+    idToken = req.headers.authorization.split('Bearer ')[1];
+  } else {
+    console.error('No token found');
+    res.status(403).json({ error: 'Unauthorized' });
+  }
+  admin
+    .auth()
+    .verifyIdToken(idToken)
+    .then(decodedToken => {
+      req.user = decodedToken;
+      console.log(decodedToken);
+      return db
+        .collection('users')
+        .where('userId', '==', req.user.uid)
+        .limit(1)
+        .get();
+    })
+    .then(data => {
+      req.user.handle = data.docs[0].data().handle;
+      return next();
+    })
+    .catch(err => {
+      console.err("Error verifying token ", err);
+      return res.status(403).json(err);
+    });
+};
+
 // Get route for all screams
-app.get("/screams", (req, res) => {
+app.get("/screams", FBAuth, (req, res) => {
   db.collection("screams")
     .orderBy("createdAt", "desc")
     .get()
@@ -37,10 +69,10 @@ app.get("/screams", (req, res) => {
 });
 
 // Post route for creating new scream
-app.post("/scream", (req, res) => {
+app.post("/scream", FBAuth, (req, res) => {
   const newScream = {
     body: req.body.body,
-    userHandle: req.body.userHandle,
+    userHandle: req.user.handle,
     createdAt: new Date().toISOString()
   };
 
@@ -160,9 +192,11 @@ app.post("/login", (req, res) => {
       return res.json({ token });
     })
     .catch(err => {
-      if(err.code === 'auth/wrong-password'){
-          return res.status(403).json({ general: 'Wrong credentials! Try again!'})
-      } else return res.status(500).json({ error: err.code }); 
+      if (err.code === "auth/wrong-password") {
+        return res
+          .status(403)
+          .json({ general: "Wrong credentials! Try again!" });
+      } else return res.status(500).json({ error: err.code });
     });
 });
 
