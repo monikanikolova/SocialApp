@@ -55,6 +55,19 @@ app.post("/scream", (req, res) => {
     });
 });
 
+// Helper function to determine if string is empty
+const isEmpty = string => {
+  if (string.trim() === "") return true;
+  else return false;
+};
+
+// Helper function to validate if it is email format
+const isEmail = email => {
+  const regEx = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  if (email.match(regEx)) return true;
+  else return false;
+};
+
 // Post route for user signup
 app.post("/signup", (req, res) => {
   const newUser = {
@@ -63,7 +76,26 @@ app.post("/signup", (req, res) => {
     confirmPassword: req.body.confirmPassword,
     handle: req.body.handle
   };
-  ///////////////TO DO VALIDATE DATA/////////////////
+
+  //   Validate data
+  let errors = {};
+  // Validate email is not empty and is correct format
+  if (isEmpty(newUser.email)) {
+    errors.email = "Must not be empty";
+  } else if (!isEmail(newUser.email)) errors.email = "Must be a valid email address!";
+
+  // Validate password is not empty
+  if (isEmpty(newUser.password)) errors.password = "You must input password";
+
+  // Validate if passwords match
+  if (newUser.password !== newUser.confirmPassword)
+    errors.confirmPassword = "Passwords must match!";
+
+  //  Validate if handle is empty
+  if (isEmpty(newUser.handle)) errors.handle = "Must not be empty!";
+
+  if (Object.keys(errors).length > 0) return res.status(400).json({ errors });
+
   let token, userId;
   db.doc(`/users/${newUser.handle}`)
     .get()
