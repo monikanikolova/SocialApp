@@ -64,6 +64,8 @@ node_modules/
 # dotenv environment variables file
 .env
 
-.AdminSDK.json
+.admin.json
 .DS_Store
+.config.js
+
 
