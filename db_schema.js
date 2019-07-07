@@ -19,6 +19,14 @@ let db = {
       website: "https://user.com",
       location: "Destin, USA"
     }
+  ],
+  comments: [
+    {
+      userHandle: "user",
+      scremId: "hakjshjsf3478454",
+      body: "Awesome!",
+      createdAt: "2019-07-04T21:28:22.648Z"
+    }
   ]
 };
 
