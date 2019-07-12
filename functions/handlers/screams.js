@@ -74,7 +74,7 @@ exports.getScream = (req, res) => {
 };
 
 exports.addComment = (req, res) => {
-  if (req.body.body.trim() === "")
+  if (req.body.body.trim() == "")
     return res.status(400).json({ error: "Must not be empty!" });
 
   const newComment = {

@@ -20,6 +20,16 @@ let db = {
       location: "Destin, USA"
     }
   ],
+  notifications: [
+    {
+      recipient: "user",
+      sender: "john",
+      read: "true | false",
+      screamId: "uhsrgeu5785478yhtrgs",
+      type: "like | comment",
+      createdAt: "2019-07-04T21:28:22.648Z"
+    }
+  ],
   comments: [
     {
       userHandle: "user",
