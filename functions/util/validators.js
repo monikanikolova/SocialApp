@@ -36,15 +36,19 @@ exports.validateSignUpData = data => {
   };
 };
 
-exports.validateLoginData = data => {
+exports.validateSignupData = data => {
   let errors = {};
-  // Validate email is not empty and is correct format
+
   if (isEmpty(data.email)) {
     errors.email = "Must not be empty";
-  } else if (!isEmail(data.email))
-    errors.email = "Must be a valid email address!";
-  // Validate if password is empty
-  if (isEmpty(data.password)) errors.password = "Must not be empty!";
+  } else if (!isEmail(data.email)) {
+    errors.email = "Must be a valid email address";
+  }
+
+  if (isEmpty(data.password)) errors.password = "Must not be empty";
+  if (data.password !== data.confirmPassword)
+    errors.confirmPassword = "Passwords must match";
+  if (isEmpty(data.handle)) errors.handle = "Must not be empty";
 
   return {
     errors,
