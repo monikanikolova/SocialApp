@@ -1,6 +1,6 @@
 // Helper function to determine if string is empty
 const isEmpty = string => {
-  if (string.trim() === "") return true;
+  if (string === "") return true;
   else return false;
 };
 
@@ -36,19 +36,11 @@ exports.validateSignUpData = data => {
   };
 };
 
-exports.validateSignupData = data => {
+exports.validateLoginData = (data) => {
   let errors = {};
 
-  if (isEmpty(data.email)) {
-    errors.email = "Must not be empty";
-  } else if (!isEmail(data.email)) {
-    errors.email = "Must be a valid email address";
-  }
-
-  if (isEmpty(data.password)) errors.password = "Must not be empty";
-  if (data.password !== data.confirmPassword)
-    errors.confirmPassword = "Passwords must match";
-  if (isEmpty(data.handle)) errors.handle = "Must not be empty";
+  if (isEmpty(data.email)) errors.email = 'Must not be empty';
+  if (isEmpty(data.password)) errors.password = 'Must not be empty';
 
   return {
     errors,

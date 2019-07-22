@@ -107,35 +107,35 @@ exports.addUserDetails = (req, res) => {
     });
 };
 
-// Get own details about user
+// Get own user details
 exports.getAuthenticatedUser = (req, res) => {
   let userData = {};
   db.doc(`/users/${req.user.handle}`)
     .get()
-    .then(doc => {
+    .then((doc) => {      
       if (doc.exists) {
         userData.credentials = doc.data();
         return db
-          .collection("likes")
-          .where("userhandle", "==", req.user.handle)
-          .get();
+          .collection('likes')
+          .where('userHandle', '==', req.user.handle)
+          .get()
       }
     })
     .then(data => {
       userData.likes = [];
-      data.forEach(doc => {
+      data.forEach((doc) => {
         userData.likes.push(doc.data());
       });
       return db
-        .collection("notifications")
-        .where("userHandle", "==", req.user.handle)
-        .orderBy("createdAt", "desc")
+        .collection('notifications')
+        .where('recipient', '==', req.user.handle)
+        .orderBy('createdAt', 'desc')
         .limit(10)
         .get();
     })
-    .then(data => {
+    .then((data) =>{
       userData.notifications = [];
-      data.forEach(doc => {
+      data.forEach((doc) => {
         userData.notifications.push({
           recipient: doc.data().recipient,
           sender: doc.data().sender,
@@ -148,7 +148,7 @@ exports.getAuthenticatedUser = (req, res) => {
       });
       return res.json(userData);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       return res.status(500).json({ error: err.code });
     });
@@ -159,21 +159,21 @@ exports.getUserDetails = (req, res) => {
   let userData = {};
   db.doc(`/users/${req.params.handle}`)
     .get()
-    .then(doc => {
+    .then((doc) => {
       if (doc.exists) {
         userData.user = doc.data();
         return db
-          .collection("screams")
-          .where("userHandle", "==", req.params.handle)
-          .orderBy("createdAt", "desc")
+          .collection('screams')
+          .where('userHandle', '==', req.params.handle)
+          .orderBy('createdAt', 'desc')
           .get();
       } else {
-        return res.status(404).json({ errror: "User not found" });
+        return res.status(404).json({ errror: 'User not found' });
       }
     })
-    .then(data => {
+    .then((data) => {
       userData.screams = [];
-      data.forEach(doc => {
+      data.forEach((doc) => {
         userData.screams.push({
           body: doc.data().body,
           createdAt: doc.data().createdAt,
@@ -186,7 +186,7 @@ exports.getUserDetails = (req, res) => {
       });
       return res.json(userData);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       return res.status(500).json({ error: err.code });
     });
